@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anurag Tiwari — AI Agent Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07070f;
+    --surface: #0e0e1a;
+    --border: #1a1a2e;
+    --accent: #7c6af7;
+    --accent2: #a78bfa;
+    --accent-dim: rgba(124,106,247,0.1);
+    --accent-glow: rgba(124,106,247,0.35);
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --green: #4ade80;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,247,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ORBS */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 12s ease-in-out infinite alternate;
+  }
+  .orb-1 {
+    width: 500px; height: 500px;
+    background: rgba(124,106,247,0.12);
+    top: -100px; left: -100px;
+    animation-delay: 0s;
+  }
+  .orb-2 {
+    width: 400px; height: 400px;
+    background: rgba(167,139,250,0.08);
+    bottom: 10%; right: -80px;
+    animation-delay: -4s;
+  }
+  .orb-3 {
+    width: 300px; height: 300px;
+    background: rgba(74,222,128,0.05);
+    top: 50%; left: 40%;
+    animation-delay: -8s;
+  }
+
+  @keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, 20px) scale(1.05); }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2.5rem;
+    background: rgba(7,7,15,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(124,106,247,0.15);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2.5rem 4rem;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green), 0 0 20px rgba(74,222,128,0.3);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--green); }
+    50% { opacity: 0.5; box-shadow: 0 0 20px var(--green); }
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 7vw, 5.8rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+
+  .hero h1 .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+
+  .hero h1 .line2::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 2px;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.6s;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.8s;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.5s;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    animation: expandLine 1.5s ease infinite;
+  }
+
+  @keyframes expandLine {
+    0%, 100% { width: 20px; opacity: 0.3; }
+    50% { width: 50px; opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s;
+    font-family: var(--sans);
+    cursor: pointer;
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #6a58e8);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(124,106,247,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(124,106,247,0.5);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover::after { opacity: 1; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124,106,247,0.2);
+  }
+
+  /* SECTIONS */
+  .section-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 3rem;
+    color: var(--text);
+  }
+
+  /* REVEAL ANIMATION */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem 1.5rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(124,106,247,0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(124,106,247,0.15);
+  }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-category {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.76rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 5px;
+    background: var(--accent-dim);
+    color: var(--accent2);
+    font-family: var(--mono);
+    border: 1px solid rgba(124,106,247,0.15);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .tag:hover {
+    background: rgba(124,106,247,0.2);
+    border-color: var(--accent);
+  }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; gap: 1.25rem; }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.85rem 2rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(124,106,247,0.06), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card:hover {
+    border-color: rgba(124,106,247,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(124,106,247,0.15);
+  }
+  .project-card:hover::before { opacity: 1; }
+  .project-card:hover::after { opacity: 1; }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.6rem;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .project-links { display: flex; gap: 0.6rem; }
+  .project-links a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 0.22rem 0.65rem;
+    border-radius: 5px;
+    transition: all 0.2s;
+  }
+  .project-links a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(124,106,247,0.2);
+  }
+
+  .project-stack {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .project-bullets li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .project-bullets li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.75rem;
+    top: 0.15rem;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .about-text {
+    color: var(--muted);
+    font-size: 0.93rem;
+    line-height: 1.85;
+  }
+  .about-text p + p { margin-top: 1rem; }
+
+  .certs-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .cert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 0.82rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .cert-item:hover {
+    border-color: rgba(124,106,247,0.4);
+    transform: translateX(3px);
+  }
+
+  .cert-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    margin-top: 0.38rem;
+    flex-shrink: 0;
+  }
+
+  .cert-name { color: var(--text); font-weight: 500; }
+  .cert-issuer { color: var(--muted); font-size: 0.75rem; margin-top: 0.15rem; }
+
+  /* CONTACT */
+  .contact-box {
+    background: var(--surface);
+    border: 1px solid rgba(124,106,247,0.2);
+    border-radius: 20px;
+    padding: 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-box::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(124,106,247,0.15), transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-box h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-box p {
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 640px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.6rem; }
+    .contact-box { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav>
+  <div class="nav-logo">anurag.dev</div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Available for opportunities</div>
+  <h1>
+    Building agents<br>
+    <span class="line2">that actually work.</span>
+  </h1>
+  <p class="hero-sub">
+    AI Agent Engineer — multi-agent orchestration, RAG pipelines, MCP integrations. BCA undergraduate at CSJMU, Kanpur.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Projects</a>
+    <a href="mailto:anuragtiwari73219@gmail.com" class="btn btn-ghost">Get in Touch</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</div>
+
+<div class="section-wrap">
+
+<hr class="divider">
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">Capabilities</div>
+  <div class="section-title reveal">Technical Skills</div>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-category">Agentic AI / LLM</div>
+      <div class="skill-tags">
+        <span class="tag">LangChain</span>
+        <span class="tag">LangGraph</span>
+        <span class="tag">CrewAI</span>
+        <span class="tag">Claude API</span>
+        <span class="tag">Groq API</span>
+        <span class="tag">MCP</span>
+        <span class="tag">RAG</span>
+        <span class="tag">Prompt Eng.</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Backend / APIs</div>
+      <div class="skill-tags">
+        <span class="tag">Python</span>
+        <span class="tag">Flask</span>
+        <span class="tag">FastAPI</span>
+        <span class="tag">REST APIs</span>
+        <span class="tag">OAuth 2.0</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-category">Data / Tools</div>
+      <div class="skill-tags">
+        <span class="tag">ChromaDB</span>
+        <span class="tag">SentenceTransformers</span>
+        <span class="tag">Git/GitHub</span>
+        <span class="tag">Render</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label reveal">Work</div>
+  <div class="section-title reveal">Projects</div>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-name">GitHub MCP Server</div>
+        <div class="project-links">
+          <a href="https://github.com/anuragtiwari73219-byte/github-mcp-server" target="_blank">GitHub →</a>
+        </div>
+      </div>
+      <div class="project-stack">Python · MCP SDK · httpx · GitHub REST API · Jun 2026</div>
+      <ul class="project-bullets">
+        <li>MCP server exposing 3 tools (list_repos, list_issues, create_issue) — lets Claude Desktop manage GitHub via natural language.</li>
+        <li>Connected and validated end-to-end with Claude Desktop's local MCP client over stdio transport.</li>
+        <li>Configured for natural-language tool invocation directly from chat.</li>
+      </ul>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-name">CrewAI Blog Writing Agent</div>
+        <div class="project-links">
+          <a href="https://github.com/anuragtiwari73219-byte/crew-blog-agent" target="_blank">GitHub →</a>
+        </div>
+      </div>
+      <div class="project-stack">Python · CrewAI · Groq API · Serper API · Jun 2026</div>
+      <ul class="project-bullets">
+        <li>Two-agent pipeline (Research Analyst + Writer) that researches a topic via live web search and writes a fully sourced blog post.</li>
+        <li>Fixed citation-stuffing bug and resolved CrewAI 1.x / Groq API compatibility issues.</li>
+        <li>Serper API integration grounds research output in real-time, verifiable sources.</li>
+      </ul>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-name">AI Email Triage Agent</div>
+        <div class="project-links">
+          <a href="https://github.com/anuragtiwari73219-byte/ai-email-triage-agent" target="_blank">GitHub →</a>
+        </div>
+      </div>
+      <div class="project-stack">Python · Flask · Claude API · Gmail OAuth 2.0 · Apr 2026</div>
+      <ul class="project-bullets">
+        <li>Gmail-integrated agent classifying emails by urgency (Urgent / Follow-up / Spam / Info) using Claude API with structured JSON output.</li>
+        <li>Migrated LLM provider to Groq (Llama 3.3 70B) after quota limits; resolved encoding issues during migration.</li>
+        <li>Validated on 20-email sample — 65% classification accuracy (informal test).</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">Background</div>
+  <div class="section-title reveal">About</div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>BCA undergraduate at CSJMU, Kanpur (Class of 2027) with hands-on experience building agentic AI systems end-to-end — from LLM orchestration to deployment.</p>
+      <p>Comfortable debugging production issues: API quota limits, provider migrations, retry logic, and tool-calling failures — not just writing first-pass code.</p>
+      <p>Currently focused on MCP integrations and multi-agent systems using CrewAI, LangGraph, and the Claude API.</p>
+    </div>
+    <div class="reveal">
+      <div class="section-label" style="margin-bottom:1rem;">Certifications</div>
+      <div class="certs-list">
+        <div class="cert-item">
+          <div class="cert-dot"></div>
+          <div><div class="cert-name">AI Fluency: Framework & Foundations</div><div class="cert-issuer">Anthropic · 2026</div></div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot"></div>
+          <div><div class="cert-name">Introduction to AI</div><div class="cert-issuer">Google · Coursera · May 2026</div></div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot"></div>
+          <div><div class="cert-name">Maximize Productivity With AI Tools</div><div class="cert-issuer">Google · Coursera · May 2026</div></div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot"></div>
+          <div><div class="cert-name">Machine Learning Fundamentals</div><div class="cert-issuer">Learna · April 2026</div></div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot"></div>
+          <div><div class="cert-name">Cyber Job Simulation</div><div class="cert-issuer">Deloitte via Forage · April 2026</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-box reveal">
+    <h3>Let's build something.</h3>
+    <p>Open to AI Engineer roles, internships, and freelance projects.</p>
+    <div class="contact-links">
+      <a href="mailto:anuragtiwari73219@gmail.com" class="btn btn-primary">anuragtiwari73219@gmail.com</a>
+      <a href="https://github.com/anuragtiwari73219-byte" target="_blank" class="btn btn-ghost">GitHub</a>
+      <a href="https://linkedin.com/in/anurag-tiwari-42079a356" target="_blank" class="btn btn-ghost">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Built by Anurag Tiwari · 2026
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Typing effect in hero tag
+  const tag = document.querySelector('.hero-tag');
+  const text = 'Available for opportunities';
+  let i = 0;
+  setTimeout(() => {
+    tag.style.opacity = '1';
+    tag.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);display:inline-block;animation:pulse 2s infinite;flex-shrink:0"></span>';
+    const span = document.createElement('span');
+    tag.appendChild(span);
+    const type = () => {
+      if (i < text.length) {
+        span.textContent += text[i++];
+        setTimeout(type, 50);
+      }
+    };
+    type();
+  }, 200);
+</script>
+
+</body>
+</html>
